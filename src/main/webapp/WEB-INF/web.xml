@@ -55,7 +55,20 @@
 		<servlet-name>ProjectUploadServlet</servlet-name>
 		<servlet-class>edu.stanford.bmir.protege.web.server.filesubmission.FileUploadServlet</servlet-class>
 	</servlet>
-
+	<!-- <servlet>
+        <servlet-name>MyApplication</servlet-name>
+        <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+        <init-param>
+            <param-name>jersey.config.server.provider.packages</param-name>
+            <param-value>
+                edu.stanford.bmir.protege.web.server
+            </param-value>
+        </init-param>        
+    </servlet> -->
+	<servlet>
+		<servlet-name>XLodLinker</servlet-name>
+		<servlet-class>edu.stanford.bmir.protege.web.server.xlodrestcontrollers.XLodAPIControllerImpl</servlet-class>
+	</servlet>
 	<!-- Servlet mappings -->
 
     <servlet-mapping>
@@ -87,6 +100,12 @@
 		<servlet-name>BioPortalAPIService</servlet-name>
 		<url-pattern>/webprotege/bioportalapi</url-pattern>
 	</servlet-mapping>
+	
+	
+    <servlet-mapping>
+        <servlet-name>XLodLinker</servlet-name>
+        <url-pattern>/api/registeruser</url-pattern>
+    </servlet-mapping>
 
 	<!-- Default page to serve -->
 	
