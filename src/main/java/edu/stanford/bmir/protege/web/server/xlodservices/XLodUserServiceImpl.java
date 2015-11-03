@@ -2,20 +2,18 @@ package edu.stanford.bmir.protege.web.server.xlodservices;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import javax.inject.Provider;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.RestTemplate;
 
-import org.springframework.stereotype.Service;
-
-import com.google.common.base.Optional;
 import com.google.common.io.BaseEncoding;
+import com.google.gwt.http.client.RequestException;
 import com.google.inject.Inject;
 
-import edu.stanford.bmir.protege.web.client.dispatch.DispatchServiceCallback;
-import edu.stanford.bmir.protege.web.client.dispatch.DispatchServiceManager;
-import edu.stanford.bmir.protege.web.client.ui.library.msgbox.MessageBox;
-import edu.stanford.bmir.protege.web.server.metaproject.AuthenticationManager;
-import edu.stanford.bmir.protege.web.server.metaproject.AuthenticationManagerImpl;
 import edu.stanford.bmir.protege.web.server.metaproject.MetaProjectStore;
+import edu.stanford.bmir.protege.web.server.xlodexceptions.UserLoginWPException;
 import edu.stanford.bmir.protege.web.server.xlodrestmodels.Request;
 import edu.stanford.bmir.protege.web.shared.auth.PasswordDigestAlgorithm;
 import edu.stanford.bmir.protege.web.shared.auth.Salt;
@@ -27,6 +25,11 @@ import edu.stanford.bmir.protege.web.shared.user.UserRegistrationException;
 import edu.stanford.smi.protege.server.metaproject.MetaProject;
 import edu.stanford.smi.protege.server.metaproject.User;
 
+/***
+ * Useful methods to interface WP with XLod APi
+ * @author Francesco Bruni <brunifrancesco02@gmail.com>
+ *
+ */
 public class XLodUserServiceImpl implements XLodUserService {
 	
 	private MetaProject metaProject;
@@ -79,9 +82,35 @@ public class XLodUserServiceImpl implements XLodUserService {
 	        return;
 	    }
 
+	/***
+	 * Check for user authorities, querying XLod API
+	 * @param request the data coming from incoming http request
+	 * @throws {@link UserLoginWPException if user does not exist/not authorized/unexpected error}
+	 */
 	@Override
-	public void checkForAuthoritiesUserXLod(Request request) {
-		// TODO Auto-generated method stub
-
+	public void checkForAuthoritiesUserXLod(Request request_) throws RequestException {
+		RestTemplate restTemplate = new RestTemplate();
+		restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+		
+		StringBuffer buffer = new StringBuffer("http://localhost:8080/linkedopendatamatera/api/wp/user?email=");
+		buffer.append(request_.getEmail());
+		ResponseEntity<edu.stanford.bmir.protege.web.server.xlodrestmodels.Response> data = null;
+		try{
+			restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+			data = restTemplate.getForEntity(buffer.toString(), edu.stanford.bmir.protege.web.server.xlodrestmodels.Response.class);
+		}catch(HttpServerErrorException htpe){
+			htpe.printStackTrace();
+		}catch (HttpClientErrorException e) {
+			if (e.getStatusCode() == org.springframework.http.HttpStatus.FORBIDDEN){
+				throw new UserLoginWPException("User seems not authorized to access to WP Editor");
+			}
+			if (e.getStatusCode() == org.springframework.http.HttpStatus.NOT_FOUND){
+				throw new UserLoginWPException("User seems not signed up to XLod");
+			}
+			return;
+		}catch (Exception e) {
+			e.printStackTrace();
+			throw new UserLoginWPException("Unexpected error in doing request to check user authorities");
+		}
 	}
 }

@@ -11,6 +11,6 @@ public class MessageBoxSignInMessageDisplay implements SignInMessageDisplay {
 
     @Override
     public void displayLoginFailedMessage() {
-        MessageBox.showMessage("Sign in failed", "Incorrect user name or password");
+        MessageBox.showMessage("Sign in failed", "Incorrect user name or password/not authorized to use this editor!");
     }
 }
