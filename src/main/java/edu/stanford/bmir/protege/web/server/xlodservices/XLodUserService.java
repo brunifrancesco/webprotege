@@ -1,5 +1,7 @@
 package edu.stanford.bmir.protege.web.server.xlodservices;
 
+import java.nio.file.attribute.UserPrincipalNotFoundException;
+
 import com.google.gwt.http.client.RequestException;
 
 import edu.stanford.bmir.protege.web.server.xlodrestmodels.Request;
@@ -20,4 +22,14 @@ public interface XLodUserService {
 	 * @throws {@link UserLoginWPException if user does not exist/not authorized/unexpected error}
 	 */
 	public void checkForAuthoritiesUserXLod(Request request) throws RequestException;
+	
+	/***
+	 * Update WP user with data coming from XLod
+	 * @param request the data coming from incoming http request
+	 * @throws UserPrincipalNotFoundException 
+	 * @throws {@link UserLoginWPException if user does not exist/not authorized/unexpected error}
+	 */
+	public void updateUserXLod(Request request) throws RequestException, UserPrincipalNotFoundException;
+	
+	
 }

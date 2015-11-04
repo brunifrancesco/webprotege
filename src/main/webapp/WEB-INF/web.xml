@@ -104,7 +104,7 @@
 	
     <servlet-mapping>
         <servlet-name>XLodLinker</servlet-name>
-        <url-pattern>/api/registeruser</url-pattern>
+        <url-pattern>/api/user</url-pattern>
     </servlet-mapping>
 
 	<!-- Default page to serve -->

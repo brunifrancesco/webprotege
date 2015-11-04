@@ -9,4 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 public interface XLodAPIController {
 
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException;
+	
+	public void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException;
 }

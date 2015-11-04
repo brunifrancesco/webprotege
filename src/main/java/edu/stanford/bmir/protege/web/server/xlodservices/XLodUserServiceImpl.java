@@ -2,6 +2,9 @@ package edu.stanford.bmir.protege.web.server.xlodservices;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.nio.file.attribute.UserPrincipalNotFoundException;
+import java.util.Set;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.HttpClientErrorException;
@@ -72,6 +75,7 @@ public class XLodUserServiceImpl implements XLodUserService {
 	                throw new UserEmailAlreadyExistsException(request.getEmail());
 	            }
 	        }
+	        
 	        User newUser = metaProject.createUser(request.getUsername(), "");
 	        newUser.setName(request.getUsername());
 	        String encodedPassword = BaseEncoding.base16().lowerCase().encode(saltedPasswordDigest.getBytes());
@@ -112,5 +116,23 @@ public class XLodUserServiceImpl implements XLodUserService {
 			e.printStackTrace();
 			throw new UserLoginWPException("Unexpected error in doing request to check user authorities");
 		}
+	}
+
+	@Override
+	public void updateUserXLod(Request request) throws UserPrincipalNotFoundException{
+		SaltedPasswordDigest saltedPasswordDigest = passwordDigestAlgorithm.getDigestOfSaltedPassword(request.getPassword(), salt);
+		User existingUser = metaProject.getUser(request.getUsername());
+        if (existingUser != null) {
+        	existingUser.setEmail(request.getEmail());
+        	String encodedPassword = BaseEncoding.base16().lowerCase().encode(saltedPasswordDigest.getBytes());
+            String encodedSalt = BaseEncoding.base16().lowerCase().encode(salt.getBytes());
+            existingUser.setDigestedPassword(encodedPassword, encodedSalt);
+            existingUser.setEmail(request.getUsername());
+            metaProjectStore.saveMetaProject(metaProject);
+        }else{
+        	throw new UserPrincipalNotFoundException(request.getUsername());
+        }
+        
+		
 	}
 }
