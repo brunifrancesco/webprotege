@@ -9,6 +9,7 @@
             text-decoration: underline !important;
             padding-top: 4px !important;
             float: right;
+            display: None;
         }
     </ui:style>
 
