@@ -3,9 +3,6 @@ package edu.stanford.bmir.protege.web.server.xlodservices;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.nio.file.attribute.UserPrincipalNotFoundException;
-import java.util.Set;
-
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
@@ -96,12 +93,11 @@ public class XLodUserServiceImpl implements XLodUserService {
 		RestTemplate restTemplate = new RestTemplate();
 		restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
 		
-		StringBuffer buffer = new StringBuffer("http://localhost:8080/linkedopendatamatera/api/wp/user?email=");
+		StringBuffer buffer = new StringBuffer("http://193.204.59.23:9888/linkedopendatamatera/api/wp/user?email=");
 		buffer.append(request_.getEmail());
-		ResponseEntity<edu.stanford.bmir.protege.web.server.xlodrestmodels.Response> data = null;
 		try{
 			restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-			data = restTemplate.getForEntity(buffer.toString(), edu.stanford.bmir.protege.web.server.xlodrestmodels.Response.class);
+			restTemplate.getForEntity(buffer.toString(), edu.stanford.bmir.protege.web.server.xlodrestmodels.Response.class);
 		}catch(HttpServerErrorException htpe){
 			htpe.printStackTrace();
 		}catch (HttpClientErrorException e) {
