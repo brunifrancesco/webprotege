@@ -331,7 +331,7 @@
     </dependencies>
 
     <build>
-
+        <finalName>webprotege</finalName>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
